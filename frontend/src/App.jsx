@@ -4,8 +4,8 @@ function App() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/hello")  // Render'da deploy edince bu URL değişecek
-      .then(res => res.json())
+    fetch("https://omeratc-fullstack-1.onrender.com/api/hello")
+    .then(res => res.json())
       .then(data => setMsg(data.message));
   }, []);
 
