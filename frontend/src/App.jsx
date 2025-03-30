@@ -4,7 +4,7 @@ function App() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
-    fetch("https://omeratc-fullstack-1.onrender.com/api/hello")
+    fetch("hhttps://omeratc-fullstack.onrender.com/api/hello")
     .then(res => res.json())
       .then(data => setMsg(data.message));
   }, []);
