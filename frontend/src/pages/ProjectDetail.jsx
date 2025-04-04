@@ -1,48 +1,52 @@
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function ProjectDetail() {
   const { id } = useParams();
+  const [project, setProject] = useState(null);
 
-  if (id === "retina-classifier") {
-    return (
-      <div className="container mx-auto px-4 py-12 max-w-4xl text-gray-800">
-        <h1 className="text-4xl font-bold text-teal-600 mb-4">Retinal Image Classifier</h1>
-        <p className="mb-4 text-lg">
-          Bu projede göz dibi görüntülerini sınıflandırmak amacıyla derin öğrenme temelli bir CNN modeli eğitildi.
-          Retina taramaları üzerinden sağlık teşhisi yapılmasına yardımcı olmayı amaçlar.
-        </p>
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/projects/${id}`)
+      .then(res => {
+        let xx =`${import.meta.env.VITE_API_URL}`;
+        console.log("Detay alındı:", xx);
+        setProject(res.data);
+      })
+      .catch(err => console.error("Detay alınamadı:", err));
+  }, [id]);
 
-        <ul className="mb-4 list-disc list-inside text-gray-700">
-          <li>Veri kümesi: Kaggle - Retinal OCT Images</li>
-          <li>Model: Convolutional Neural Network (CNN)</li>
-          <li>Framework: TensorFlow / Keras</li>
-          <li>Görüntü işleme: OpenCV</li>
-        </ul>
+  if (!project) return <p className="p-6">Yükleniyor...</p>;
 
-        <div className="mb-6">
-          <img
-            src="/project_thumbs/retina.png"
-            alt="Retina örneği"
-            className="rounded shadow-md"
-          />
-        </div>
-
-        <a
-          href="https://github.com/omeratc/retina-classifier"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-block px-6 py-3 bg-amber-600 text-white rounded hover:bg-amber-700 transition"
-        >
-          GitHub Repo
-        </a>
-      </div>
-    );
-  }
+  const cover = project.images?.find(img => img.isCover);
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl text-center text-gray-600">
-      <h2 className="text-2xl font-bold mb-4">Proje bulunamadı</h2>
-      <p>Belirttiğiniz proje ID'sine karşılık gelen bir içerik bulunamadı.</p>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
+
+      {cover && (
+        <img
+          src={cover.url}
+          alt="Kapak"
+          className="w-full h-72 object-cover rounded mb-4"
+        />
+      )}
+
+      <p className="text-gray-700 mb-4">
+        {project.fullDescription || project.shortDescription}
+      </p>
+
+      {typeof project.link === "string" && project.link.startsWith("http") && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-teal-500 text-white px-4 py-2 rounded"
+        >
+          Uygulamayı Gör
+        </a>
+      )}
     </div>
   );
 }
